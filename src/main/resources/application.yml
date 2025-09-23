@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   application:
     name: mywiki
   datasource:
@@ -6,3 +8,10 @@ spring:
     username: mywiki
     password: "1234"
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect

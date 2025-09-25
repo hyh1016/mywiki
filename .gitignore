@@ -38,3 +38,6 @@ out/
 ### Kotlin ###
 .kotlin
 application-local.yml
+
+### Test ###
+http/

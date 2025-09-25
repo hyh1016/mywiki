@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jsoup:jsoup:1.17.2")
 
     // oauth
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -41,6 +42,9 @@ dependencies {
     // lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+
+    // logging
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

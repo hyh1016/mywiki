@@ -2,21 +2,16 @@ package com.yhproject.mywiki.auth
 
 import com.yhproject.mywiki.domain.user.User
 import com.yhproject.mywiki.domain.user.UserRepository
-import jakarta.servlet.http.HttpSession
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Collections
 
 @Service
 class CustomOAuth2UserService(
-    private val userRepository: UserRepository,
-    private val httpSession: HttpSession
+    private val userRepository: UserRepository
 ) : OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     @Transactional
@@ -35,12 +30,10 @@ class CustomOAuth2UserService(
 
         val user = saveOrUpdate(attributes)
 
-        httpSession.setAttribute("user", SessionUser(user))
-
-        return DefaultOAuth2User(
-            Collections.singleton(SimpleGrantedAuthority(user.role.key)),
-            attributes.attributes,
-            attributes.nameAttributeKey
+        return PrincipalDetails(
+            user = user,
+            attributes = attributes.attributes,
+            nameAttributeKey = attributes.nameAttributeKey
         )
     }
 

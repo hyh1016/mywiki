@@ -4,6 +4,7 @@ import com.yhproject.mywiki.auth.LoginUser
 import com.yhproject.mywiki.auth.SessionUser
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
 import com.yhproject.mywiki.dto.BookmarkResponse
+import com.yhproject.mywiki.dto.BookmarksResponse
 import com.yhproject.mywiki.service.BookmarkService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,13 +20,13 @@ class BookmarkController(
         @RequestBody request: BookmarkCreateRequest,
         @LoginUser sessionUser: SessionUser
     ): ResponseEntity<BookmarkResponse> {
-        val bookmark = bookmarkService.createBookmark(request, sessionUser)
+        val bookmark = bookmarkService.createBookmark(request, sessionUser.id)
         return ResponseEntity.ok(bookmark)
     }
 
     @GetMapping
-    fun getBookmarks(@LoginUser sessionUser: SessionUser): ResponseEntity<List<BookmarkResponse>> {
-        val bookmarks = bookmarkService.getBookmarks(sessionUser)
+    fun getBookmarks(@LoginUser sessionUser: SessionUser): ResponseEntity<BookmarksResponse> {
+        val bookmarks = bookmarkService.getBookmarks(sessionUser.id)
         return ResponseEntity.ok(bookmarks)
     }
 }

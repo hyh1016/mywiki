@@ -1,4 +1,3 @@
-
 package com.yhproject.mywiki.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -15,8 +14,8 @@ import com.yhproject.mywiki.service.SummaryService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.verify
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -68,7 +67,7 @@ class SummaryControllerTest {
         val request = SummaryCreateRequest(bookmarkId = 1L, content = "Test summary content")
         val response = SummaryResponse(1L, 1L, "Test summary content", LocalDateTime.now().toString())
 
-        given(summaryService.createSummary(request, testUser.id)).willReturn(response)
+        whenever(summaryService.createSummary(request, testUser.id)).thenReturn(response)
 
         // when & then
         mockMvc.perform(
@@ -91,7 +90,7 @@ class SummaryControllerTest {
         val request = UpdateSummaryRequest(content = "Updated summary content")
         val response = SummaryResponse(summaryId, 1L, "Updated summary content", LocalDateTime.now().toString())
 
-        given(summaryService.updateSummary(summaryId, request, testUser.id)).willReturn(response)
+        whenever(summaryService.updateSummary(summaryId, request, testUser.id)).thenReturn(response)
 
         // when & then
         mockMvc.perform(
@@ -116,7 +115,7 @@ class SummaryControllerTest {
             SummaryResponse(2L, 2L, "Summary 2", LocalDateTime.now().toString())
         )
         val response = SummariesResponse(summaryList)
-        given(summaryService.getSummariesByUserId(userId)).willReturn(response)
+        whenever(summaryService.getSummariesByUserId(userId)).thenReturn(response)
 
         // when & then
         mockMvc.perform(
@@ -136,7 +135,7 @@ class SummaryControllerTest {
         // given
         val bookmarkId = 1L
         val response = SummaryResponse(1L, bookmarkId, "Test summary", LocalDateTime.now().toString())
-        given(summaryService.getSummaryByBookmarkId(bookmarkId, testUser.id)).willReturn(response)
+        whenever(summaryService.getSummaryByBookmarkId(bookmarkId, testUser.id)).thenReturn(response)
 
         // when & then
         mockMvc.perform(

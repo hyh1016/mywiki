@@ -6,6 +6,10 @@ data class BookmarkCreateRequest(
     val url: String
 )
 
+data class BookmarksResponse(
+    val bookmarks: List<BookmarkResponse>
+)
+
 data class BookmarkResponse(
     val id: Long,
     val url: String,

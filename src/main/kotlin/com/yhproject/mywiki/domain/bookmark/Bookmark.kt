@@ -1,6 +1,5 @@
 package com.yhproject.mywiki.domain.bookmark
 
-import com.yhproject.mywiki.domain.summary.Summary
 import com.yhproject.mywiki.domain.user.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -19,10 +18,13 @@ class Bookmark(
     @Column(nullable = false)
     var url: String,
 
+    @Column(length = 511)
     val title: String,
 
+    @Column(length = 1023)
     val description: String,
 
+    @Column(length = 511)
     val image: String,
 
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -1,5 +1,6 @@
 package com.yhproject.mywiki.domain.bookmark
 
+import com.yhproject.mywiki.domain.summary.Summary
 import com.yhproject.mywiki.domain.user.User
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -29,6 +30,4 @@ class Bookmark(
 
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
-) {
-    protected constructor() : this(0, User(), "", "", "", "", LocalDateTime.now(), LocalDateTime.now())
-}
+)

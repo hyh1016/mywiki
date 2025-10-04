@@ -1,4 +1,3 @@
-
 package com.yhproject.mywiki.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -14,8 +13,8 @@ import com.yhproject.mywiki.service.SummaryService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.verify
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -71,7 +70,7 @@ class SummaryTemplateControllerTest {
         )
         val response = SummaryTemplateResponse.from(templates)
 
-        given(summaryService.getSummaryTemplates()).willReturn(response)
+        whenever(summaryService.getSummaryTemplates()).thenReturn(response)
 
         // when & then
         mockMvc.perform(

@@ -1,12 +1,12 @@
 package com.yhproject.mywiki.service
 
-import com.yhproject.mywiki.auth.SessionUser
 import com.yhproject.mywiki.domain.bookmark.Bookmark
 import com.yhproject.mywiki.domain.bookmark.BookmarkRepository
 import com.yhproject.mywiki.domain.user.User
 import com.yhproject.mywiki.domain.user.UserRepository
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
 import com.yhproject.mywiki.dto.BookmarkResponse
+import com.yhproject.mywiki.dto.BookmarksResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.springframework.stereotype.Service
@@ -20,8 +20,8 @@ class BookmarkService(
     private val logger = KotlinLogging.logger {}
 
     @Transactional
-    fun createBookmark(request: BookmarkCreateRequest, sessionUser: SessionUser): BookmarkResponse {
-        val user = findUserById(sessionUser.id)
+    fun createBookmark(request: BookmarkCreateRequest, userId: Long): BookmarkResponse {
+        val user = findUserById(userId)
 
         // REFACTOR: 성능 이슈가 있으면 비동기로 전환
         val documentMetadata = getDocumentMetadata(request.url)
@@ -39,11 +39,12 @@ class BookmarkService(
     }
 
     @Transactional(readOnly = true)
-    fun getBookmarks(sessionUser: SessionUser): List<BookmarkResponse> {
-        val user = findUserById(sessionUser.id)
+    fun getBookmarks(userId: Long): BookmarksResponse {
+        val user = findUserById(userId)
 
-        return bookmarkRepository.findAllByUserId(user.id)
+        val bookmarks = bookmarkRepository.findAllByUserId(user.id)
             .map { BookmarkResponse.from(it) }
+        return BookmarksResponse(bookmarks)
     }
 
     private fun findUserById(userId: Long): User {

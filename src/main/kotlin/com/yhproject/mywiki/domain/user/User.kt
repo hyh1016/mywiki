@@ -30,7 +30,6 @@ class User(
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
 ) {
-    internal constructor() : this(0, "", "", Role.GUEST, "", "", LocalDateTime.now(), LocalDateTime.now())
 
     fun update(name: String): User {
         this.name = name

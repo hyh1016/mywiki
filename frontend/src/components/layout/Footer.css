@@ -1,0 +1,11 @@
+.app-footer {
+    width: 100%;
+    text-align: center;
+    padding: calc(var(--spacing-unit) * 2) 0;
+}
+
+.app-footer p {
+    font-size: 12px;
+    color: var(--font-color-main);
+    opacity: 0.7;
+}

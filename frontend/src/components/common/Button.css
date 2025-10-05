@@ -1,0 +1,29 @@
+.common-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
+    border: none;
+    border-radius: 8px;
+    background-color: var(--point-color-main);
+    color: white;
+    font-size: var(--font-body);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    text-decoration: none;
+}
+
+.common-btn:hover:not(:disabled) {
+    background-color: var(--point-color-sub);
+}
+
+.common-btn:active:not(:disabled) {
+    background-color: var(--point-color-active);
+    transform: translateY(1px);
+}
+
+.common-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

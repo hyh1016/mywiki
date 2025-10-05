@@ -1,0 +1,18 @@
+.layout-container {
+    width: 100%;
+    max-width: 768px;
+    min-height: 100vh;
+    margin: 0 auto; /* Horizontally center the container */
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex-grow: 1; /* Make the main content area expand */
+    display: flex;
+    flex-direction: column;
+}

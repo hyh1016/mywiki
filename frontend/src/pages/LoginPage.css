@@ -1,0 +1,40 @@
+.login-logo {
+    width: 200px;
+}
+
+.login-page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: calc(100vh - 120px); /* 전체 높이에서 헤더와 푸터 높이를 뺀 값 */
+}
+
+.login-page-content h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.login-page-content p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 32px;
+}
+
+.google-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.google-icon {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}

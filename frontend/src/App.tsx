@@ -7,6 +7,8 @@ import PrivateRoute from "./components/common/PrivateRoute";
 
 import AddBookmarkPage from "./pages/AddBookmarkPage";
 
+import BookmarkListPage from "./pages/BookmarkListPage";
+
 function App() {
   return (
       <Router>
@@ -14,6 +16,7 @@ function App() {
               <Routes>
                   <Route path="/" element={<PrivateRoute><MainPage /></PrivateRoute>} />
                   <Route path="/add-bookmark" element={<PrivateRoute><AddBookmarkPage /></PrivateRoute>} />
+                  <Route path="/bookmarks" element={<PrivateRoute><BookmarkListPage /></PrivateRoute>} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="*" element={<Navigate to="/" />} />
               </Routes>

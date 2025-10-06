@@ -16,7 +16,7 @@ const MainPage: React.FC = () => {
         <Layout>
             <div className="main-page-content">
                 <img src={logo} alt="mywiki logo" className="main-logo" />
-                <h3>mywiki에 오신 것을 환영합니다!</h3>
+                <h2>mywiki에 오신 것을 환영합니다!</h2>
                 <p>오늘은 어떤 지식을 쌓아볼까요?</p>
                 <div className="main-page-buttons">
                     <Button onClick={() => handleNavigate('/add-bookmark')} className="main-page-btn">

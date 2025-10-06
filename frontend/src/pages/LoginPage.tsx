@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
         <Layout>
             <div className="login-page-content">
                 <img src={logo} alt="mywiki logo" className="login-logo" />
-                <h3>mywiki에 오신 것을 환영합니다!</h3>
+                <h2>mywiki에 오신 것을 환영합니다!</h2>
                 <p>오늘은 어떤 지식을 쌓아볼까요?</p>
                 <Button onClick={handleLogin} className="google-login-btn">
                     <img src={GoogleIcon} alt="Google icon" className="google-icon" />

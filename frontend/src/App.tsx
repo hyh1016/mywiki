@@ -5,12 +5,15 @@ import MainPage from "./pages/MainPage";
 import {AuthProvider} from "./contexts/AuthContext";
 import PrivateRoute from "./components/common/PrivateRoute";
 
+import AddBookmarkPage from "./pages/AddBookmarkPage";
+
 function App() {
   return (
       <Router>
           <AuthProvider>
               <Routes>
                   <Route path="/" element={<PrivateRoute><MainPage /></PrivateRoute>} />
+                  <Route path="/add-bookmark" element={<PrivateRoute><AddBookmarkPage /></PrivateRoute>} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="*" element={<Navigate to="/" />} />
               </Routes>

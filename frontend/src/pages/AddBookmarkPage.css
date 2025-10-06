@@ -1,0 +1,119 @@
+.add-bookmark-page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    padding: 24px;
+}
+
+.add-bookmark-container {
+    width: 100%;
+    max-width: 768px;
+}
+
+.add-bookmark-form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 24px;
+}
+
+.url-input {
+    flex-grow: 1;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-right: 8px;
+    box-sizing: border-box;
+}
+
+.url-input:focus {
+    outline: none;
+    border-color: #4b4c9d;
+    box-shadow: 0 0 0 2px rgba(75, 76, 157, 0.2);
+}
+
+.add-bookmark-btn {
+    flex-shrink: 0;
+}
+
+.message {
+    margin-top: 16px;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+@media (max-width: 768px) {
+    .add-bookmark-form {
+        flex-direction: column;
+    }
+
+    .url-input {
+        margin-right: 0;
+        margin-bottom: 16px;
+        width: 100%;
+    }
+
+    .add-bookmark-form .add-bookmark-btn {
+        width: 100%;
+    }
+}
+
+.bookmark-info-card {
+    margin-top: 32px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.bookmark-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 16px;
+    flex-shrink: 0;
+    border: 1px solid #f0f0f0;
+}
+
+.bookmark-text-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.bookmark-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 8px 0;
+}
+
+.bookmark-description {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .bookmark-info-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .bookmark-image {
+        margin-right: 0;
+        margin-bottom: 16px;
+    }
+}
+

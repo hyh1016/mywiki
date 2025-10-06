@@ -1,0 +1,48 @@
+
+.main-logo {
+    width: 200px;
+}
+
+.main-page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: calc(100vh - 120px); /* 전체 높이에서 헤더와 푸터 높이를 뺀 값 */
+}
+
+.main-page-content h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.main-page-content p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 32px;
+}
+
+.main-page-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 90%;
+    max-width: 400px;
+}
+
+@media (max-width: 480px) {
+    .main-page-buttons {
+        grid-template-columns: 1fr;
+        width: 80%;
+        max-width: 350px;
+    }
+}
+
+.main-page-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+}

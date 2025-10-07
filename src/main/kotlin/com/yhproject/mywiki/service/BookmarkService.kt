@@ -5,8 +5,6 @@ import com.yhproject.mywiki.domain.bookmark.BookmarkRepository
 import com.yhproject.mywiki.domain.user.User
 import com.yhproject.mywiki.domain.user.UserRepository
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
-import com.yhproject.mywiki.dto.BookmarkResponse
-import com.yhproject.mywiki.dto.BookmarksResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.springframework.stereotype.Service
@@ -20,31 +18,39 @@ class BookmarkService(
     private val logger = KotlinLogging.logger {}
 
     @Transactional
-    fun createBookmark(request: BookmarkCreateRequest, userId: Long): BookmarkResponse {
+    fun createBookmark(request: BookmarkCreateRequest, userId: Long): Bookmark {
         val user = findUserById(userId)
 
         // REFACTOR: 성능 이슈가 있으면 비동기로 전환
         val documentMetadata = getDocumentMetadata(request.url)
 
         val bookmark = Bookmark(
-            user = user,
+            userId = userId,
             url = request.url,
             title = documentMetadata.title,
             description = documentMetadata.description,
             image = documentMetadata.image
         )
 
-        val savedBookmark = bookmarkRepository.save(bookmark)
-        return BookmarkResponse.from(savedBookmark)
+        return bookmarkRepository.save(bookmark)
     }
 
     @Transactional(readOnly = true)
-    fun getBookmarks(userId: Long): BookmarksResponse {
+    fun getBookmarks(userId: Long): List<Bookmark> {
         val user = findUserById(userId)
 
         val bookmarks = bookmarkRepository.findAllByUserId(user.id)
-            .map { BookmarkResponse.from(it) }
-        return BookmarksResponse(bookmarks)
+        return bookmarks
+    }
+
+    @Transactional(readOnly = true)
+    fun getBookmark(bookmarkId: Long, userId: Long): Bookmark {
+        val user = findUserById(userId)
+        val bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow { IllegalArgumentException("Bookmark not found: $bookmarkId") }
+        if (bookmark.userId != userId) {
+            throw IllegalAccessException("User $userId does not have permission for this bookmark: $bookmarkId")
+        }
+        return bookmark
     }
 
     private fun findUserById(userId: Long): User {

@@ -21,12 +21,21 @@ class BookmarkController(
         @LoginUser sessionUser: SessionUser
     ): ResponseEntity<BookmarkResponse> {
         val bookmark = bookmarkService.createBookmark(request, sessionUser.id)
-        return ResponseEntity.ok(bookmark)
+        return ResponseEntity.ok(BookmarkResponse.from(bookmark))
     }
 
     @GetMapping
     fun getBookmarks(@LoginUser sessionUser: SessionUser): ResponseEntity<BookmarksResponse> {
         val bookmarks = bookmarkService.getBookmarks(sessionUser.id)
-        return ResponseEntity.ok(bookmarks)
+        return ResponseEntity.ok(BookmarksResponse.from(bookmarks))
+    }
+
+    @GetMapping("/{bookmarkId}")
+    fun getBookmark(
+        @PathVariable bookmarkId: Long,
+        @LoginUser sessionUser: SessionUser
+    ): ResponseEntity<BookmarkResponse> {
+        val bookmark = bookmarkService.getBookmark(bookmarkId, sessionUser.id)
+        return ResponseEntity.ok(BookmarkResponse.from(bookmark))
     }
 }

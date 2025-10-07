@@ -1,4 +1,9 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Thin.woff') format('woff');
+  font-weight: 200;
+  font-display: swap;
+}
 
 :root {
   --background-start-color: #E2E2F1;
@@ -28,6 +33,10 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+text, textarea {
+  font-family: 'Pretendard', sans-serif;
 }
 
 h2, h3 {

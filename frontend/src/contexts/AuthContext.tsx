@@ -1,5 +1,6 @@
 import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {apiClient} from '../api/apiClient';
+import {useLocation} from "react-router-dom";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -11,24 +12,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const location = useLocation();
 
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                // 백엔드에 로그인 상태를 확인할 수 있는 API 요청
-                // 성공 시(2xx), 사용자는 로그인 상태임
                 await apiClient.get('/api/user/me');
                 setIsAuthenticated(true);
             } catch (error) {
-                // 실패 시(401 등), 사용자는 로그인 상태가 아님
                 setIsAuthenticated(false);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        checkAuthStatus();
-    }, []);
+        if (location.pathname === '/login') {
+            setIsAuthenticated(false);
+            setIsLoading(false);
+        } else {
+            checkAuthStatus();
+        }
+    }, [location.pathname]);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, isLoading }}>

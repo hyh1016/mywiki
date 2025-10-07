@@ -8,7 +8,13 @@ data class BookmarkCreateRequest(
 
 data class BookmarksResponse(
     val bookmarks: List<BookmarkResponse>
-)
+) {
+    companion object {
+        fun from(bookmarks: List<Bookmark>): BookmarksResponse {
+            return BookmarksResponse(bookmarks.map { bookmark -> BookmarkResponse.from(bookmark) })
+        }
+    }
+}
 
 data class BookmarkResponse(
     val id: Long,

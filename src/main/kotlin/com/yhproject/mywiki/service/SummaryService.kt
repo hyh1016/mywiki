@@ -20,8 +20,8 @@ class SummaryService(
     @Transactional
     fun createSummary(request: SummaryCreateRequest, userId: Long): SummaryResponse {
         val bookmark = getBookmark(request.bookmarkId)
-        if (bookmark.user.id != userId) {
-            throw IllegalAccessException("User does not have permission for this bookmark")
+        if (bookmark.userId != userId) {
+            throw IllegalAccessException("User does not have permission for this bookmark: ${request.bookmarkId}")
         }
 
         val summary = Summary(
@@ -37,7 +37,7 @@ class SummaryService(
         val summary = summaryRepository.findByIdOrNull(summaryId)
             ?: throw IllegalArgumentException("Summary not found with id: $summaryId")
 
-        if (summary.bookmark.user.id != userId) {
+        if (summary.bookmark.userId != userId) {
             throw IllegalAccessException("User does not have permission for this summary")
         }
 
@@ -58,7 +58,7 @@ class SummaryService(
     @Transactional(readOnly = true)
     fun getSummaryByBookmarkId(bookmarkId: Long, userId: Long): SummaryResponse {
         val bookmark = getBookmark(bookmarkId)
-        if (bookmark.user.id != userId) {
+        if (bookmark.userId != userId) {
             throw IllegalAccessException("User $userId does not have permission for this bookmark $bookmarkId")
         }
 

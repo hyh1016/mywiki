@@ -1,4 +1,134 @@
 .add-summary-page-content {
     padding: 24px;
+}
+
+.summary-form {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.summary-section h2 {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--point-color-main);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--point-color-light);
+}
+
+.sub-section {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    border: 1px solid #eee;
+}
+
+.sub-section .description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.sub-section h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.sub-section textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.sub-section textarea:focus {
+    outline: none;
+    border-color: var(--point-color-main);
+    box-shadow: 0 0 0 2px rgba(75, 76, 157, 0.2);
+}
+
+.section-select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: white;
+}
+
+.multi-select-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.multi-select-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    background-color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.multi-select-label:hover {
+    background-color: #f0f0f0;
+}
+
+.multi-select-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+.sub-section.removable {
+    position: relative;
+}
+
+.sub-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.remove-btn {
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+    line-height: 28px;
     text-align: center;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+}
+
+.remove-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    margin-top: 16px;
+}
+
+.error-message {
+    color: #d9534f;
 }

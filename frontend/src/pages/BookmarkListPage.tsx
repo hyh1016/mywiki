@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import {apiClient} from '../api/apiClient';
 import './BookmarkListPage.css';
@@ -41,7 +42,7 @@ const BookmarkListPage: React.FC = () => {
                     <div className="bookmarks-container">
                         {bookmarks.length > 0 ? (
                             bookmarks.map(bookmark => (
-                                <a key={bookmark.id} href={bookmark.url} target="_blank" rel="noopener noreferrer" className="bookmark-card-link">
+                                <Link key={bookmark.id} to={`/bookmarks/${bookmark.id}`} state={{ bookmark }} className="bookmark-card-link">
                                     <div className="bookmark-card">
                                         <div className="bookmark-card-image-wrapper">
                                             {bookmark.image && <img src={bookmark.image} alt={bookmark.title} className="bookmark-card-image" />}
@@ -51,7 +52,7 @@ const BookmarkListPage: React.FC = () => {
                                             <p className="bookmark-card-description">{bookmark.description}</p>
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                             ))
                         ) : (
                             <p>등록된 북마크가 없습니다.</p>

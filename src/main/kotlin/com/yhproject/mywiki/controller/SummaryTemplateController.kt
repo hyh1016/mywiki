@@ -16,6 +16,6 @@ class SummaryTemplateController(
     @GetMapping
     fun getSummaryTemplates(): ResponseEntity<SummaryTemplateResponse> {
         val templates = summaryService.getSummaryTemplates()
-        return ResponseEntity.ok(templates)
+        return ResponseEntity.ok(SummaryTemplateResponse.from(templates))
     }
 }

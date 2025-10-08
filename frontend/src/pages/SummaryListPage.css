@@ -1,0 +1,83 @@
+.summary-list-page-content {
+    padding: 24px;
+}
+
+.summaries-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.summary-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.summary-card-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.summary-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-card-image-wrapper {
+    width: 100%;
+    padding-top: 52.5%; /* 16:9 Aspect Ratio */
+    position: relative;
+    background-color: #f0f0f0;
+}
+
+.summary-card-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.summary-card-content {
+    padding: 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--font-color-point);
+}
+
+.summary-card-source {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 12px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.summary-card-date {
+    font-size: 12px;
+    color: #999;
+    margin-top: auto; /* Pushes date to the bottom */
+}
+
+.error-message {
+    color: #d9534f;
+}

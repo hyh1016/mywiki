@@ -9,6 +9,7 @@ import BookmarkListPage from "./pages/BookmarkListPage";
 import BookmarkDetailPage from "./pages/BookmarkDetailPage";
 import AddSummaryPage from "./pages/AddSummaryPage";
 import SummaryDetailPage from "./pages/SummaryDetailPage";
+import SummaryListPage from "./pages/SummaryListPage";
 
 const AppLayout = () => (
     <AuthProvider>
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
             { path: "/add-bookmark", element: <PrivateRoute><AddBookmarkPage /></PrivateRoute> },
             { path: "/bookmarks", element: <PrivateRoute><BookmarkListPage /></PrivateRoute> },
             { path: "/bookmarks/:id", element: <PrivateRoute><BookmarkDetailPage /></PrivateRoute> },
+            { path: "/summaries", element: <PrivateRoute><SummaryListPage /></PrivateRoute> },
             { path: "/summaries/new", element: <PrivateRoute><AddSummaryPage /></PrivateRoute> },
             { path: "/summaries/:id", element: <PrivateRoute><SummaryDetailPage /></PrivateRoute> },
             { path: "/login", element: <LoginPage /> },

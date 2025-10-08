@@ -21,8 +21,8 @@ class SummaryController(
         @RequestBody request: SummaryCreateRequest,
         @LoginUser user: SessionUser
     ): ResponseEntity<SummaryResponse> {
-        val summaryResponse = summaryService.createSummary(request, user.id)
-        return ResponseEntity.ok(summaryResponse)
+        val summary = summaryService.createSummary(request, user.id)
+        return ResponseEntity.ok(SummaryResponse.from(summary))
     }
 
     @PutMapping("/{summaryId}")
@@ -31,17 +31,16 @@ class SummaryController(
         @RequestBody request: UpdateSummaryRequest,
         @LoginUser user: SessionUser
     ): ResponseEntity<SummaryResponse> {
-        val summaryResponse = summaryService.updateSummary(summaryId, request, user.id)
-        return ResponseEntity.ok(summaryResponse)
+        val summary = summaryService.updateSummary(summaryId, request, user.id)
+        return ResponseEntity.ok(SummaryResponse.from(summary))
     }
 
-    @GetMapping(params = ["userId"])
+    @GetMapping
     fun getSummariesByUser(
-        @RequestParam userId: Long,
         @LoginUser user: SessionUser
     ): ResponseEntity<SummariesResponse> {
-        val summaries = summaryService.getSummariesByUserId(userId)
-        return ResponseEntity.ok(summaries)
+        val summaries = summaryService.getSummariesByUserId(user.id)
+        return ResponseEntity.ok(SummariesResponse.from(summaries))
     }
 
     @GetMapping(params = ["bookmarkId"])
@@ -50,6 +49,6 @@ class SummaryController(
         @LoginUser user: SessionUser
     ): ResponseEntity<SummaryResponse> {
         val summary = summaryService.getSummaryByBookmarkId(bookmarkId, user.id)
-        return ResponseEntity.ok(summary)
+        return ResponseEntity.ok(SummaryResponse.from(summary))
     }
 }

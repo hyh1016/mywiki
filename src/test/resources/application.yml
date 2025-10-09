@@ -21,3 +21,7 @@ spring:
             client-id: test
             client-secret: test
             scope: profile,email
+
+app:
+  oauth2:
+    redirect-uri: http://localhost:3000

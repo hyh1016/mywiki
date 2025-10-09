@@ -1,6 +1,7 @@
 package com.yhproject.mywiki.dto
 
 import com.yhproject.mywiki.domain.bookmark.Bookmark
+import java.time.LocalDateTime
 
 data class BookmarkCreateRequest(
     val url: String
@@ -21,7 +22,8 @@ data class BookmarkResponse(
     val url: String,
     val title: String,
     val description: String,
-    val image: String
+    val image: String,
+    val createdAt: LocalDateTime
 ) {
     companion object {
         fun from(bookmark: Bookmark): BookmarkResponse = BookmarkResponse(
@@ -29,7 +31,8 @@ data class BookmarkResponse(
             url = bookmark.url,
             title = bookmark.title,
             description = bookmark.description,
-            image = bookmark.image
+            image = bookmark.image,
+            createdAt = bookmark.createdAt
         )
     }
 }

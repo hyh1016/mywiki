@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.yhproject.mywiki.auth.CustomOAuth2UserService
 import com.yhproject.mywiki.auth.WithMockCustomUser
 import com.yhproject.mywiki.config.SecurityConfig
+import com.yhproject.mywiki.domain.bookmark.Bookmark
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
 import com.yhproject.mywiki.dto.BookmarkResponse
 import com.yhproject.mywiki.dto.BookmarksResponse
@@ -45,8 +46,16 @@ class BookmarkControllerTest {
     fun `createBookmark returns created bookmark`() {
         // given
         val request = BookmarkCreateRequest(url = "https://example.com")
-        val response = BookmarkResponse(1L, "https://example.com", "Test Title", "Test Description", "image.png")
-        whenever(bookmarkService.createBookmark(any(), any())).thenReturn(response)
+        val bookmark = Bookmark(
+            id = 1L,
+            userId = 1L,
+            url = "https://example.com",
+            title = "Test Title",
+            description = "Test Description",
+            image = "image.png"
+        )
+        val response = BookmarkResponse.from(bookmark)
+        whenever(bookmarkService.createBookmark(any(), any())).thenReturn(bookmark)
 
         // when & then
         mockMvc.perform(
@@ -63,12 +72,25 @@ class BookmarkControllerTest {
     @DisplayName("북마크 목록 조회 요청을 보내면 북마크 리스트를 반환한다")
     fun `getBookmarks returns bookmark list`() {
         // given
-        val bookmarks = BookmarksResponse(
-            listOf(
-                BookmarkResponse(1L, "https://example.com", "Test Title", "Test Description", "image.png"),
-                BookmarkResponse(2L, "https://example2.com", "Test Title 2", "Test Description 2", "image2.png")
+        val bookmarks = listOf(
+            Bookmark(
+                id = 1L,
+                userId = 1L,
+                url = "https://example.com",
+                title = "Test Title",
+                description = "Test Description",
+                image = "image.png"
+            ),
+            Bookmark(
+                id = 2L,
+                userId = 1L,
+                url = "https://example2.com",
+                title = "Test Title 2",
+                description = "Test Description 2",
+                image = "image2.png"
             )
         )
+        val response = BookmarksResponse.from(bookmarks)
         whenever(bookmarkService.getBookmarks(any())).thenReturn(bookmarks)
 
         // when & then
@@ -76,7 +98,32 @@ class BookmarkControllerTest {
             get("/api/bookmarks")
         )
             .andExpect(status().isOk)
-            .andExpect(content().json(objectMapper.writeValueAsString(bookmarks)))
+            .andExpect(content().json(objectMapper.writeValueAsString(response)))
+    }
+
+    @Test
+    @WithMockCustomUser
+    @DisplayName("특정 북마크 조회 요청을 보내면 북마크 정보를 반환한다")
+    fun `getBookmark returns a bookmark`() {
+        // given
+        val bookmarkId = 1L
+        val bookmark = Bookmark(
+            id = bookmarkId,
+            userId = 1L,
+            url = "https://example.com",
+            title = "Test Title",
+            description = "Test Description",
+            image = "image.png"
+        )
+        val response = BookmarkResponse.from(bookmark)
+        whenever(bookmarkService.getBookmark(any(), any())).thenReturn(bookmark)
+
+        // when & then
+        mockMvc.perform(
+            get("/api/bookmarks/{bookmarkId}", bookmarkId)
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().json(objectMapper.writeValueAsString(response)))
     }
 
     @Test

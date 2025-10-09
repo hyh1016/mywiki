@@ -2,15 +2,12 @@ package com.yhproject.mywiki.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.yhproject.mywiki.auth.CustomOAuth2UserService
-import com.yhproject.mywiki.auth.PrincipalDetails
+import com.yhproject.mywiki.auth.WithMockCustomUser
 import com.yhproject.mywiki.config.SecurityConfig
 import com.yhproject.mywiki.domain.summary.SummaryTemplate
 import com.yhproject.mywiki.domain.summary.SummaryTemplateSection
-import com.yhproject.mywiki.domain.user.Role
-import com.yhproject.mywiki.domain.user.User
 import com.yhproject.mywiki.dto.SummaryTemplateResponse
 import com.yhproject.mywiki.service.SummaryService
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.verify
@@ -18,7 +15,6 @@ import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -41,22 +37,9 @@ class SummaryTemplateControllerTest {
     @MockitoBean
     private lateinit var customOAuth2UserService: CustomOAuth2UserService
 
-    private lateinit var principal: PrincipalDetails
-
-    @BeforeEach
-    fun setUp() {
-        val user = User(
-            id = 1L,
-            name = "testuser",
-            email = "test@email.com",
-            role = Role.USER,
-            provider = "google",
-            providerId = "12345"
-        )
-        principal = PrincipalDetails(user, emptyMap(), "sub")
-    }
 
     @Test
+    @WithMockCustomUser
     @DisplayName("요약 템플릿 조회 요청을 보내면 템플릿 목록을 반환한다")
     fun `getSummaryTemplates returns template list`() {
         // given
@@ -70,12 +53,11 @@ class SummaryTemplateControllerTest {
         )
         val response = SummaryTemplateResponse.from(templates)
 
-        whenever(summaryService.getSummaryTemplates()).thenReturn(response)
+        whenever(summaryService.getSummaryTemplates()).thenReturn(templates)
 
         // when & then
         mockMvc.perform(
             get("/api/summary-templates")
-                .with(user(principal))
         )
             .andExpect(status().isOk)
             .andExpect(content().json(objectMapper.writeValueAsString(response)))

@@ -3,7 +3,7 @@ spring:
     name: mywiki
 
   datasource:
-    url: jdbc:mysql://localhost:3306/mywiki
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/mywiki
     username: ${DB_USERNAME:mywiki}
     password: ${DB_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver

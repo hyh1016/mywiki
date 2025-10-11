@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "My Wiki",
+  "name": "집단지성을 이용한 거대하고 효율적인 지식 저장소 구축 프로젝트",
   "icons": [
     {
       "src": "favicon.ico",

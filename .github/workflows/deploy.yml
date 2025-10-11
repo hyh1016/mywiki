@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 env:
   # Backend paths
@@ -17,7 +18,7 @@ env:
 
 jobs:
   deploy-backend:
-    name: Test Backend
+    name: Deploy Backend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -88,7 +89,7 @@ jobs:
           script: |
             cd ${{ env.REMOTE_BACKEND_PATH }}
             echo "Stopping existing application..."
-            pgrep -f app.jar | xargs -r kill -15
+            pgrep -f app.jar | xargs -r kill -15 || true
             sleep 5
             echo "Starting new application..."
             set -o allexport; source .env; set +o allexport

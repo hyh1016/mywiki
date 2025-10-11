@@ -1,5 +1,5 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import './NavBar.css';
 
@@ -8,15 +8,11 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ title }) => {
-    const navigate = useNavigate();
-
-    const handleLogoClick = () => {
-        navigate('/');
-    };
-
     return (
         <nav className="nav-bar">
-            <img src={logo} alt="mywiki logo" className="nav-logo" onClick={handleLogoClick} />
+            <Link to="/">
+                <img src={logo} alt="mywiki logo" className="nav-logo" />
+            </Link>
             <h1 className="nav-title">{title}</h1>
         </nav>
     );

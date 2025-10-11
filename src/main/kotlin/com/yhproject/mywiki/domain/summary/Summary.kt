@@ -15,8 +15,9 @@ class Summary(
     @JoinColumn(name = "bookmark_id", nullable = false)
     val bookmark: Bookmark,
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    var content: String,
+    @Convert(converter = SummaryContentConverter::class)
+    @Column(nullable = false)
+    var contents: SummaryContents,
 
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(),

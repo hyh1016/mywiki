@@ -5,7 +5,7 @@ import com.yhproject.mywiki.auth.CustomOAuth2UserService
 import com.yhproject.mywiki.auth.WithMockCustomUser
 import com.yhproject.mywiki.config.SecurityConfig
 import com.yhproject.mywiki.domain.bookmark.Bookmark
-import com.yhproject.mywiki.domain.summary.Summary
+import com.yhproject.mywiki.domain.summary.*
 import com.yhproject.mywiki.dto.SummariesResponse
 import com.yhproject.mywiki.dto.SummaryCreateRequest
 import com.yhproject.mywiki.dto.SummaryResponse
@@ -51,10 +51,17 @@ class SummaryControllerTest {
         image = "image$id.png"
     )
 
-    private fun createTestSummary(id: Long, bookmark: Bookmark, content: String) = Summary(
+    private fun createTestSummary(id: Long, bookmark: Bookmark, contents: SummaryContents) = Summary(
         id = id,
         bookmark = bookmark,
-        content = content,
+        contents = contents,
+    )
+
+    private fun createTestTemplate(id: Long, section: SummaryTemplateSection, title: String, description: String?) = SummaryTemplate(
+        id = id,
+        section = section,
+        title = title,
+        description = description
     )
 
     @Test
@@ -64,12 +71,17 @@ class SummaryControllerTest {
         // given
         val userId = 1L
         val bookmarkId = 1L
-        val request = SummaryCreateRequest(bookmarkId = bookmarkId, content = "Test summary content")
+        val testContentItems = listOf(SummaryContentItem(id = 1, content = "Test summary content"))
+        val request = SummaryCreateRequest(bookmarkId = bookmarkId, contents = testContentItems)
         val bookmark = createTestBookmark(bookmarkId, userId)
-        val summary = createTestSummary(1L, bookmark, request.content)
-        val response = SummaryResponse.from(summary)
+        val summary = createTestSummary(1L, bookmark, SummaryContents(testContentItems))
+        val templates = listOf(
+            createTestTemplate(1, SummaryTemplateSection.BIG_PICTURE, "이 글을 한 문장으로 요약하자면?", "이 글이 소개하고자 했던 개념, 해결하고자 했던 문제 등을 하나의 문장으로 정리해보세요.")
+        )
+        val response = SummaryResponse.from(summary, templates)
 
         whenever(summaryService.createSummary(any(), any())).thenReturn(summary)
+        whenever(summaryService.getSummaryTemplates()).thenReturn(templates)
 
         // when & then
         mockMvc.perform(
@@ -77,10 +89,11 @@ class SummaryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
         )
-            .andExpect(status().isOk)
+            .andExpect(status().isCreated)
             .andExpect(content().json(objectMapper.writeValueAsString(response)))
 
         verify(summaryService).createSummary(any(), any())
+        verify(summaryService).getSummaryTemplates()
     }
 
     @Test
@@ -91,12 +104,17 @@ class SummaryControllerTest {
         val userId = 1L
         val summaryId = 1L
         val bookmarkId = 1L
-        val request = UpdateSummaryRequest(content = "Updated summary content")
+        val testContentItems = listOf(SummaryContentItem(id = 1, content = "Updated summary content"))
+        val request = UpdateSummaryRequest(contents = testContentItems)
         val bookmark = createTestBookmark(bookmarkId, userId)
-        val summary = createTestSummary(summaryId, bookmark, request.content)
-        val response = SummaryResponse.from(summary)
+        val summary = createTestSummary(summaryId, bookmark, SummaryContents(testContentItems))
+        val templates = listOf(
+            createTestTemplate(1, SummaryTemplateSection.BIG_PICTURE, "이 글을 한 문장으로 요약하자면?", "이 글이 소개하고자 했던 개념, 해결하고자 했던 문제 등을 하나의 문장으로 정리해보세요.")
+        )
+        val response = SummaryResponse.from(summary, templates)
 
         whenever(summaryService.updateSummary(any(), any(), any())).thenReturn(summary)
+        whenever(summaryService.getSummaryTemplates()).thenReturn(templates)
 
         // when & then
         mockMvc.perform(
@@ -108,6 +126,7 @@ class SummaryControllerTest {
             .andExpect(content().json(objectMapper.writeValueAsString(response)))
 
         verify(summaryService).updateSummary(any(), any(), any())
+        verify(summaryService).getSummaryTemplates()
     }
 
     @Test
@@ -119,8 +138,8 @@ class SummaryControllerTest {
         val bookmark1 = createTestBookmark(1L, userId)
         val bookmark2 = createTestBookmark(2L, userId)
         val summaryList = listOf(
-            createTestSummary(1L, bookmark1, "Summary 1"),
-            createTestSummary(2L, bookmark2, "Summary 2")
+            createTestSummary(1L, bookmark1, SummaryContents(listOf(SummaryContentItem(id = 1, content = "Summary 1")))),
+            createTestSummary(2L, bookmark2, SummaryContents(listOf(SummaryContentItem(id = 2, content = "Summary 2"))))
         )
         val response = SummariesResponse.from(summaryList)
         whenever(summaryService.getSummariesByUserId(userId)).thenReturn(summaryList)
@@ -143,9 +162,15 @@ class SummaryControllerTest {
         val userId = 1L
         val bookmarkId = 1L
         val bookmark = createTestBookmark(bookmarkId, userId)
-        val summary = createTestSummary(1L, bookmark, "Test summary")
-        val response = SummaryResponse.from(summary)
+        val testContentItems = listOf(SummaryContentItem(id = 3, content = "Test summary"))
+        val summary = createTestSummary(1L, bookmark, SummaryContents(testContentItems))
+        val templates = listOf(
+            createTestTemplate(3, SummaryTemplateSection.DETAILS, "왜-무엇을-어떻게형", "")
+        )
+        val response = SummaryResponse.from(summary, templates)
+
         whenever(summaryService.getSummaryByBookmarkId(bookmarkId, userId)).thenReturn(summary)
+        whenever(summaryService.getSummaryTemplates()).thenReturn(templates)
 
         // when & then
         mockMvc.perform(
@@ -156,13 +181,15 @@ class SummaryControllerTest {
             .andExpect(content().json(objectMapper.writeValueAsString(response)))
 
         verify(summaryService).getSummaryByBookmarkId(bookmarkId, userId)
+        verify(summaryService).getSummaryTemplates()
     }
 
     @Test
     @DisplayName("인증 없이 요약 생성을 요청하면 401 에러를 반환한다")
     fun `createSummary without auth returns 401`() {
         // given
-        val request = SummaryCreateRequest(bookmarkId = 1L, content = "Test content")
+        val testContentItems = listOf(SummaryContentItem(id = 1, content = "Test content"))
+        val request = SummaryCreateRequest(bookmarkId = 1L, contents = testContentItems)
 
         // when & then
         mockMvc.perform(

@@ -9,6 +9,7 @@ import com.yhproject.mywiki.dto.UpdateSummaryRequest
 import com.yhproject.mywiki.service.SummaryService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.net.URI
 
 @RestController
 @RequestMapping("/api/summaries")
@@ -22,7 +23,11 @@ class SummaryController(
         @LoginUser user: SessionUser
     ): ResponseEntity<SummaryResponse> {
         val summary = summaryService.createSummary(request, user.id)
-        return ResponseEntity.ok(SummaryResponse.from(summary))
+        val templates = summaryService.getSummaryTemplates()
+        val response = SummaryResponse.from(summary, templates)
+        return ResponseEntity
+            .created(URI.create("/api/summaries/" + summary.id))
+            .body(response)
     }
 
     @PutMapping("/{summaryId}")
@@ -32,7 +37,20 @@ class SummaryController(
         @LoginUser user: SessionUser
     ): ResponseEntity<SummaryResponse> {
         val summary = summaryService.updateSummary(summaryId, request, user.id)
-        return ResponseEntity.ok(SummaryResponse.from(summary))
+        val templates = summaryService.getSummaryTemplates()
+        val response = SummaryResponse.from(summary, templates)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/{summaryId}")
+    fun getSummary(
+        @PathVariable("summaryId") summaryId: Long,
+        @LoginUser user: SessionUser
+    ): ResponseEntity<SummaryResponse> {
+        val summary = summaryService.getSummary(summaryId, user.id)
+        val templates = summaryService.getSummaryTemplates()
+        val response = SummaryResponse.from(summary, templates)
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping
@@ -49,6 +67,8 @@ class SummaryController(
         @LoginUser user: SessionUser
     ): ResponseEntity<SummaryResponse> {
         val summary = summaryService.getSummaryByBookmarkId(bookmarkId, user.id)
-        return ResponseEntity.ok(SummaryResponse.from(summary))
+        val templates = summaryService.getSummaryTemplates()
+        val response = SummaryResponse.from(summary, templates)
+        return ResponseEntity.ok(response)
     }
 }

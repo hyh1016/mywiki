@@ -2,10 +2,7 @@ package com.yhproject.mywiki.service
 
 import com.yhproject.mywiki.domain.bookmark.Bookmark
 import com.yhproject.mywiki.domain.bookmark.BookmarkRepository
-import com.yhproject.mywiki.domain.summary.Summary
-import com.yhproject.mywiki.domain.summary.SummaryRepository
-import com.yhproject.mywiki.domain.summary.SummaryTemplate
-import com.yhproject.mywiki.domain.summary.SummaryTemplateRepository
+import com.yhproject.mywiki.domain.summary.*
 import com.yhproject.mywiki.dto.SummaryCreateRequest
 import com.yhproject.mywiki.dto.UpdateSummaryRequest
 import org.springframework.data.repository.findByIdOrNull
@@ -28,7 +25,7 @@ class SummaryService(
 
         val summary = Summary(
             bookmark = bookmark,
-            content = request.content,
+            contents = SummaryContents(request.contents),
         )
         val id = summaryRepository.save(summary).id
         return summaryRepository.findByIdWithBookmark(id).get()
@@ -43,10 +40,21 @@ class SummaryService(
             throw IllegalAccessException("User does not have permission for this summary")
         }
 
-        summary.content = request.content
+        summary.contents = SummaryContents(request.contents)
         summary.updatedAt = java.time.LocalDateTime.now()
 
         return summaryRepository.save(summary)
+    }
+
+    @Transactional(readOnly = true)
+    fun getSummary(id: Long, userId: Long): Summary {
+        val summary = summaryRepository.findByIdWithBookmark(id)
+            .orElseThrow { IllegalArgumentException("Summary not found with id: $id") }
+        if (summary.bookmark.userId != userId) {
+            throw IllegalAccessException("User $userId does not have permission for this summary: $id")
+        }
+
+        return summary
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +68,7 @@ class SummaryService(
             .orElseThrow { IllegalArgumentException("Summary not found for bookmark with id: $bookmarkId") }
 
         if (summary.bookmark.userId != userId) {
-            throw IllegalAccessException("User $userId does not have permission for this bookmark $bookmarkId")
+            throw IllegalAccessException("User $userId does not have permission for this summary with bookmark: $bookmarkId")
         }
 
         return summary

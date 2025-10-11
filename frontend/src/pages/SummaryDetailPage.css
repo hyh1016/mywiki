@@ -1,0 +1,76 @@
+.summary-detail-page-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.summary-main-title {
+    font-size: var(--font-h1);
+    font-weight: bold;
+    color: var(--font-color-main);
+    text-align: center;
+    margin: 16px 0 32px 0;
+    width: 100%;
+}
+
+.summary-detail-section {
+    width: 100%;
+    margin-bottom: 48px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--point-color-main);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--point-color-light);
+}
+
+.summary-item-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 24px 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+}
+
+.item-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.item-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    border-left: 3px solid #eee;
+    padding-left: 12px;
+}
+
+.item-content {
+    font-size: var(--font-body);
+    line-height: 1.7;
+    white-space: pre-wrap; /* This will preserve newlines */
+    word-break: break-word;
+}
+
+.detail-page-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.detail-page-btn {
+    flex-grow: 1; /* Make buttons take equal width */
+}
+
+.error-message {
+    color: #d9534f;
+}

@@ -1,13 +1,13 @@
 spring:
-  profiles:
-    active: local
   application:
     name: mywiki
+
   datasource:
     url: jdbc:mysql://localhost:3306/mywiki
-    username: mywiki
-    password: "1234"
+    username: ${DB_USERNAME:mywiki}
+    password: ${DB_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,6 +16,17 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope:
+              - profile
+              - email
+
 app:
   oauth2:
-    redirect-uri: http://localhost:3000
+    redirect-uri: ${OAUTH2_REDIRECT_URI:http://localhost:3000}

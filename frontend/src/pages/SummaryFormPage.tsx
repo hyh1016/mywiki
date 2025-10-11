@@ -1,74 +1,53 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useBlocker, useNavigate, useSearchParams} from 'react-router-dom';
+import {useBlocker, useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Button from '../components/common/Button';
 import {apiClient} from '../api/apiClient';
-import './AddSummaryPage.css';
+import {useSummaryForm} from '../hooks/useSummaryForm';
+import {TemplateSection} from '../types/summary';
+import './SummaryFormPage.css';
 
-// API 응답 데이터 타입 정의
-interface SummaryTemplateElement {
-    id: number;
-    section: string;
-    title: string;
-    description: string | null;
-}
-
-interface TemplateSection {
-    order: number;
-    type: 'STATIC' | 'SELECT' | 'MULTI_SELECT';
-    element: SummaryTemplateElement[];
-}
-
-interface TemplatesResponse {
-    templates: Record<string, TemplateSection>;
-}
-
-interface SubmissionResponse {
-    summaryId: number;
-}
-
-// 컴포넌트 내부 상태 타입
-interface SelectedSubSections {
-    [sectionTitle: string]: number | number[] | null;
-}
-
-interface Contents {
-    [subSectionId: number]: string;
-}
-
-const AddSummaryPage: React.FC = () => {
+const SummaryFormPage: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const bookmarkId = searchParams.get('bookmarkId');
 
-    const [templates, setTemplates] = useState<Record<string, TemplateSection>>({});
-    const [selectedSubSections, setSelectedSubSections] = useState<SelectedSubSections>({});
-    const [contents, setContents] = useState<Contents>({});
-    const [isLoading, setIsLoading] = useState(true);
+    const {
+        isEditMode,
+        templates,
+        selectedSubSections,
+        contents,
+        isLoading,
+        error,
+        setContents,
+        setSelectedSubSections,
+    } = useSummaryForm(id);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [isNavigating, setIsNavigating] = useState(false);
+    const [navigationTarget, setNavigationTarget] = useState<string | null>(null);
     const textAreaRefs = useRef<{ [key: number]: HTMLTextAreaElement | null }>({});
 
     const isDirty = Object.values(contents).some(content => content && content.length > 0);
-    const blocker = useBlocker(isDirty);
+    const blocker = useBlocker(isDirty && !isNavigating);
 
-    // 브라우저 이탈 방지 (새로고침, 탭 닫기 등)
+    useEffect(() => {
+        if (navigationTarget) {
+            navigate(navigationTarget);
+        }
+    }, [navigationTarget, navigate]);
+
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             e.preventDefault();
-            e.returnValue = ''; // Chrome requires returnValue to be set.
+            e.returnValue = '';
         };
+        if (isDirty && !isNavigating) window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isDirty, isNavigating]);
 
-        if (isDirty) {
-            window.addEventListener('beforeunload', handleBeforeUnload);
-        }
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, [isDirty]);
-
-    // 앱 내부 라우팅 이탈 방지 (뒤로가기, 링크 클릭 등)
     useEffect(() => {
         if (blocker.state === 'blocked') {
             if (window.confirm('이 페이지를 벗어나면 변경 내용이 사라집니다. 정말 벗어나시겠습니까?')) {
@@ -79,36 +58,12 @@ const AddSummaryPage: React.FC = () => {
         }
     }, [blocker]);
 
-    useEffect(() => {
-        const fetchTemplates = async () => {
-            try {
-                const response = await apiClient.get<TemplatesResponse>('/api/summary-templates');
-                const fetchedTemplates = response.data.templates;
-                setTemplates(fetchedTemplates);
-
-                const initialSelections: SelectedSubSections = {};
-                Object.entries(fetchedTemplates).forEach(([title, section]) => {
-                    if (section.type === 'STATIC') {
-                        initialSelections[title] = section.element[0].id;
-                    } else {
-                        initialSelections[title] = null;
-                    }
-                });
-                setSelectedSubSections(initialSelections);
-
-            } catch (err) {
-                setError('요약 템플릿을 불러오는데 실패했습니다.');
-                console.error(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchTemplates();
-    }, []);
+    const handleContentChange = (subSectionId: number, value: string) => {
+        setContents(prev => ({ ...prev, [subSectionId]: value }));
+    };
 
     const handleSelectChange = (sectionTitle: string, subSectionId: number) => {
-        setSelectedSubSections(prev => ({...prev, [sectionTitle]: subSectionId}));
+        setSelectedSubSections(prev => ({ ...prev, [sectionTitle]: subSectionId }));
     };
 
     const handleMultiSelectChange = (sectionTitle: string, subSectionId: number) => {
@@ -118,7 +73,7 @@ const AddSummaryPage: React.FC = () => {
 
         if (isUnchecking && contents[subSectionId]) {
             if (!window.confirm('해당 세션을 지우면 작성한 내용이 사라집니다. 정말 삭제하시겠습니까?')) {
-                return; // 취소 시 중단
+                return;
             }
         }
 
@@ -128,28 +83,22 @@ const AddSummaryPage: React.FC = () => {
 
         if (isUnchecking) {
             setContents(prev => {
-                const newContents = {...prev};
+                const newContents = { ...prev };
                 delete newContents[subSectionId];
                 return newContents;
             });
         }
-
-        setSelectedSubSections(prev => ({...prev, [sectionTitle]: newIds}));
+        setSelectedSubSections(prev => ({ ...prev, [sectionTitle]: newIds }));
     };
 
-    const handleContentChange = (subSectionId: number, value: string) => {
-        setContents(prev => ({...prev, [subSectionId]: value}));
-    };
-
-    const handleSubmit = async () => {
-        // 유효성 검사 먼저 실행
+    const validateForm = (): boolean => {
         const coreInsightSection = templates['핵심 파악'];
         if (coreInsightSection) {
             const subSectionId = coreInsightSection.element[0].id;
             if (!contents[subSectionId] || contents[subSectionId].trim() === '') {
                 alert("'핵심 파악' 섹션은 필수 입력 항목입니다.");
                 textAreaRefs.current[subSectionId]?.focus();
-                return;
+                return false;
             }
         }
 
@@ -158,64 +107,54 @@ const AddSummaryPage: React.FC = () => {
             const selectedSubSectionId = selectedSubSections['세부 내용 정리'];
             if (!selectedSubSectionId) {
                 alert("'세부 내용 정리'에서 템플릿을 선택해주세요.");
-                return;
+                return false;
             }
             if (!contents[selectedSubSectionId as number] || contents[selectedSubSectionId as number].trim() === '') {
                 alert("'세부 내용 정리' 섹션은 필수 입력 항목입니다.");
                 textAreaRefs.current[selectedSubSectionId as number]?.focus();
-                return;
+                return false;
             }
         }
+        return true;
+    };
 
-        // 유효성 검사 통과 후 저장 확인
-        if (!window.confirm('저장하시겠습니까?')) {
+    const handleSubmit = async () => {
+        if (!validateForm()) return;
+        if (!window.confirm(isEditMode ? '수정하시겠습니까?' : '저장하시겠습니까?')) return;
+        if (!isEditMode && !bookmarkId) {
+            setSubmitError('북마크 정보가 없습니다.');
             return;
         }
 
-        if (!bookmarkId) {
-            setError('북마크 정보가 없습니다.');
-            return;
-        }
         setIsSubmitting(true);
-        setError(null);
+        setSubmitError(null);
 
-        let markdownContent = '';
-        Object.entries(templates)
-            .sort(([, a], [, b]) => a.order - b.order)
-            .forEach(([title, section]) => {
-                const selection = selectedSubSections[title];
-                if (!selection || (Array.isArray(selection) && selection.length === 0)) return;
+        const contentsArray = Object.entries(contents)
+            .filter(([, content]) => content?.trim() !== '')
+            .map(([id, content]) => ({
+                id: parseInt(id, 10),
+                content: content
+            }));
 
-                markdownContent += `## ${title}\n\n`;
-
-                const elementMap = new Map(section.element.map(el => [el.id, el]));
-
-                if (Array.isArray(selection)) { // MULTI_SELECT
-                    selection.forEach(id => {
-                        const subSection = elementMap.get(id);
-                        if (subSection) {
-                            markdownContent += `### ${subSection.title}\n`;
-                            markdownContent += `${contents[id] || ''}\n\n`;
-                        }
-                    });
-                } else { // STATIC or SELECT
-                    const subSection = elementMap.get(selection as number);
-                    if (subSection) {
-                        markdownContent += `### ${subSection.title}\n`;
-                        markdownContent += `${contents[selection as number] || ''}\n\n`;
-                    }
-                }
-            });
+        const payload = isEditMode
+            ? { contents: contentsArray }
+            : { bookmarkId: parseInt(bookmarkId!, 10), contents: contentsArray };
 
         try {
-            const response = await apiClient.post<SubmissionResponse>('/api/summaries', {
-                bookmarkId: parseInt(bookmarkId, 10),
-                content: markdownContent.trim(),
-            });
-            alert('저장되었습니다');
-            navigate(`/summaries/${response.data.summaryId}`);
+            if (isEditMode) {
+                await apiClient.put(`/api/summaries/${id}`, payload);
+                alert('수정되었습니다');
+                setIsNavigating(true);
+                setNavigationTarget(`/summaries/${id}`);
+            } else {
+                const response = await apiClient.post('/api/summaries', payload);
+                alert('저장되었습니다');
+                const newId = response.data.id; // Use ID from response body
+                setIsNavigating(true);
+                setNavigationTarget(`/summaries/${newId}`);
+            }
         } catch (err) {
-            setError('요약 저장에 실패했습니다. 네트워크 연결을 확인하고 다시 시도해주세요.');
+            setSubmitError(isEditMode ? '요약 수정에 실패했습니다.' : '요약 저장에 실패했습니다.');
             console.error(err);
         } finally {
             setIsSubmitting(false);
@@ -307,11 +246,11 @@ const AddSummaryPage: React.FC = () => {
     };
 
     if (isLoading) {
-        return <Layout title="요약 작성하기"><div className="add-summary-page-content"><p>로딩 중...</p></div></Layout>;
+        return <Layout title={isEditMode ? "요약 수정하기" : "요약 작성하기"}><div className="add-summary-page-content"><p>로딩 중...</p></div></Layout>;
     }
 
     return (
-        <Layout title="요약 작성하기">
+        <Layout title={isEditMode ? "요약 수정하기" : "요약 작성하기"}>
             <div className="add-summary-page-content">
                 <div className="summary-form">
                     {Object.entries(templates)
@@ -323,8 +262,9 @@ const AddSummaryPage: React.FC = () => {
                             </section>
                         ))}
                     {error && <p className="error-message">{error}</p>}
+                    {submitError && <p className="error-message">{submitError}</p>}
                     <Button onClick={handleSubmit} disabled={isSubmitting} className="submit-btn">
-                        {isSubmitting ? '저장 중...' : '요약 저장하기'}
+                        {isSubmitting ? (isEditMode ? '수정 중...' : '저장 중...') : (isEditMode ? '요약 수정하기' : '요약 저장하기')}
                     </Button>
                 </div>
             </div>
@@ -332,4 +272,4 @@ const AddSummaryPage: React.FC = () => {
     );
 };
 
-export default AddSummaryPage;
+export default SummaryFormPage;

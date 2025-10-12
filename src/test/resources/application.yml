@@ -25,3 +25,5 @@ spring:
 app:
   oauth2:
     redirect-uri: http://localhost:3000
+  cors:
+    allowed-origins: http://localhost:3000

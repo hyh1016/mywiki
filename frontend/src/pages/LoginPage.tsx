@@ -7,9 +7,8 @@ import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
     const handleLogin = () => {
-        if (process.env.REACT_APP_API_BASE_URL) {
-            window.location.href = `${process.env.REACT_APP_API_BASE_URL}/oauth2/authorization/google`;
-        }
+        const baseUrl = process.env.REACT_APP_API_BASE_URL || '';
+        window.location.href = `${baseUrl}/oauth2/authorization/google`;
     };
 
     return (

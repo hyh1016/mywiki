@@ -47,7 +47,8 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "OAUTH2_REDIRECT_URI=http://${{ secrets.SERVER_HOST }}" >> .env
+          echo "OAUTH2_REDIRECT_URI=${{ vars.OAUTH2_REDIRECT_URI }}" >> .env
+          echo "CORS_ALLOWED_ORIGINS=${{ vars.CORS_ALLOWED_ORIGINS }}" >> .env
 
       - name: SCP JAR file
         uses: appleboy/scp-action@v1
@@ -106,7 +107,7 @@ jobs:
       - name: Create .env.production file
         working-directory: ${{ env.FRONTEND_SRC_PATH }}
         run: |
-          echo "REACT_APP_API_BASE_URL=http://localhost:8080" > .env.production
+          echo "REACT_APP_API_BASE_URL=" > .env.production
 
       - name: Install and Build Frontend
         working-directory: ${{ env.FRONTEND_SRC_PATH }}

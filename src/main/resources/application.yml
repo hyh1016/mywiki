@@ -1,3 +1,6 @@
+server:
+  forward-headers-strategy: framework
+
 spring:
   application:
     name: mywiki
@@ -30,3 +33,5 @@ spring:
 app:
   oauth2:
     redirect-uri: ${OAUTH2_REDIRECT_URI:http://localhost:3000}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}

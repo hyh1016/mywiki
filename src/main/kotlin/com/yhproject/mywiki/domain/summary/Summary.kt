@@ -16,7 +16,7 @@ class Summary(
     val bookmark: Bookmark,
 
     @Convert(converter = SummaryContentConverter::class)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     var contents: SummaryContents,
 
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -1,5 +1,8 @@
 server:
   forward-headers-strategy: framework
+  servlet:
+    session:
+      timeout: 168h # 1 week
 
 spring:
   application:

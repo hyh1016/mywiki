@@ -2,7 +2,6 @@ package com.yhproject.mywiki.service
 
 import com.yhproject.mywiki.domain.bookmark.Bookmark
 import com.yhproject.mywiki.domain.bookmark.BookmarkRepository
-import com.yhproject.mywiki.domain.user.User
 import com.yhproject.mywiki.domain.user.UserRepository
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -19,7 +18,7 @@ class BookmarkService(
 
     @Transactional
     fun createBookmark(request: BookmarkCreateRequest, userId: Long): Bookmark {
-        val user = findUserById(userId)
+        validateUserExists(userId)
 
         // REFACTOR: 성능 이슈가 있으면 비동기로 전환
         val documentMetadata = getDocumentMetadata(request.url)
@@ -37,15 +36,15 @@ class BookmarkService(
 
     @Transactional(readOnly = true)
     fun getBookmarks(userId: Long): List<Bookmark> {
-        val user = findUserById(userId)
+        validateUserExists(userId)
 
-        val bookmarks = bookmarkRepository.findAllByUserId(user.id)
+        val bookmarks = bookmarkRepository.findAllByUserId(userId).sortedByDescending { it.id }
         return bookmarks
     }
 
     @Transactional(readOnly = true)
     fun getBookmark(bookmarkId: Long, userId: Long): Bookmark {
-        val user = findUserById(userId)
+        validateUserExists(userId)
         val bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow { IllegalArgumentException("Bookmark not found: $bookmarkId") }
         if (bookmark.userId != userId) {
             throw IllegalAccessException("User $userId does not have permission for this bookmark: $bookmarkId")
@@ -53,9 +52,10 @@ class BookmarkService(
         return bookmark
     }
 
-    private fun findUserById(userId: Long): User {
-        return userRepository.findById(userId)
-            .orElseThrow { IllegalArgumentException("User not found with id: $userId") }
+    private fun validateUserExists(userId: Long) {
+        if (!userRepository.existsById(userId)) {
+            throw IllegalArgumentException("User not found with id: $userId")
+        }
     }
 
     private fun getDocumentMetadata(url: String): DocumentMetadata {

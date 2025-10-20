@@ -1,7 +1,7 @@
 @font-face {
-  font-family: 'Pretendard';
-  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Thin.woff') format('woff');
-  font-weight: 200;
+  font-family: 'GMarketSans';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  font-weight: 500;
   font-display: swap;
 }
 
@@ -22,7 +22,6 @@
 
 body {
   margin: 0;
-  font-family: 'Pretendard', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(to bottom right, var(--background-start-color), var(--background-end-color));
@@ -31,13 +30,13 @@ body {
   min-height: 100vh;
 }
 
+* {
+  font-family: 'GMarketSans', sans-serif;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
-
-text, textarea {
-  font-family: 'Pretendard', sans-serif;
 }
 
 h2, h3 {

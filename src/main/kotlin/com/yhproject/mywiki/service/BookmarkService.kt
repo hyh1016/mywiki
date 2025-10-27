@@ -52,6 +52,13 @@ class BookmarkService(
         return bookmark
     }
 
+    @Transactional(readOnly = true)
+    fun getRandomBookmark(userId: Long): Bookmark {
+        validateUserExists(userId)
+        return bookmarkRepository.findRandomByUserId(userId)
+            ?: throw NoSuchElementException("사용자의 북마크가 존재하지 않습니다. (userId: $userId)")
+    }
+
     private fun validateUserExists(userId: Long) {
         if (!userRepository.existsById(userId)) {
             throw IllegalArgumentException("User not found with id: $userId")

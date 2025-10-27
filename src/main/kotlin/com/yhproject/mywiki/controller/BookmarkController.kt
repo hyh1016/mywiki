@@ -38,4 +38,10 @@ class BookmarkController(
         val bookmark = bookmarkService.getBookmark(bookmarkId, sessionUser.id)
         return ResponseEntity.ok(BookmarkResponse.from(bookmark))
     }
+
+    @GetMapping("/random")
+    fun getRandomBookmarks(@LoginUser sessionUser: SessionUser): ResponseEntity<BookmarkResponse> {
+        val bookmark = bookmarkService.getRandomBookmark(sessionUser.id)
+        return ResponseEntity.ok(BookmarkResponse.from(bookmark))
+    }
 }

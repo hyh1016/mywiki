@@ -4,9 +4,11 @@ import Layout from '../components/layout/Layout';
 import Button from '../components/common/Button';
 import logo from '../assets/logo.png';
 import './MainPage.css';
+import {useRandomBookmark} from "../hooks/useRandomBookmark";
 
 const MainPage: React.FC = () => {
     const navigate = useNavigate();
+    const { fetchAndNavigate, isLoading } = useRandomBookmark();
 
     const handleNavigate = (path: string) => {
         navigate(path);
@@ -28,8 +30,8 @@ const MainPage: React.FC = () => {
                     <Button onClick={() => handleNavigate('/summaries')} className="main-page-btn">
                         <span>요약글 목록 보기</span>
                     </Button>
-                    <Button onClick={() => handleNavigate('/random')} className="main-page-btn">
-                        <span>랜덤 글 읽기</span>
+                    <Button onClick={fetchAndNavigate} disabled={isLoading} className="main-page-btn">
+                        <span>{isLoading ? '탐색 중...' : '랜덤 글 읽기'}</span>
                     </Button>
                 </div>
             </div>

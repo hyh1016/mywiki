@@ -7,15 +7,24 @@ data class BookmarkCreateRequest(
     val url: String
 )
 
-data class BookmarksResponse(
-    val bookmarks: List<BookmarkResponse>
+data class BookmarkCursorResponse(
+    val content: List<BookmarkResponse>,
+    val nextCursor: Long?
 ) {
     companion object {
-        fun from(bookmarks: List<Bookmark>): BookmarksResponse {
-            return BookmarksResponse(bookmarks.map { bookmark -> BookmarkResponse.from(bookmark) })
+        fun from(bookmarkSlice: BookmarkSlice): BookmarkCursorResponse {
+            return BookmarkCursorResponse(
+                bookmarkSlice.content.map { bookmark -> BookmarkResponse.from(bookmark) },
+                bookmarkSlice.nextCursor
+            )
         }
     }
 }
+
+data class BookmarkSlice(
+    val content: List<Bookmark>,
+    val nextCursor: Long?
+)
 
 data class BookmarkResponse(
     val id: Long,

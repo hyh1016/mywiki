@@ -7,8 +7,6 @@ import com.yhproject.mywiki.dto.BookmarkCreateRequest
 import com.yhproject.mywiki.dto.BookmarkSlice
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -41,13 +39,7 @@ class BookmarkService(
     fun getBookmarks(userId: Long, cursor: Long?, size: Int): BookmarkSlice {
         validateUserExists(userId)
 
-        val pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "id"))
-
-        val bookmarks = if (cursor == null) {
-            bookmarkRepository.findByUserIdOrderByIdDesc(userId, pageable)
-        } else {
-            bookmarkRepository.findByUserIdAndIdLessThanOrderByIdDesc(userId, cursor, pageable)
-        }
+        val bookmarks = bookmarkRepository.findByUserId(userId, cursor, size)
 
         val nextCursor = if (bookmarks.size == size) bookmarks.lastOrNull()?.id else null
 
@@ -57,7 +49,8 @@ class BookmarkService(
     @Transactional(readOnly = true)
     fun getBookmark(bookmarkId: Long, userId: Long): Bookmark {
         validateUserExists(userId)
-        val bookmark = bookmarkRepository.findById(bookmarkId).orElseThrow { IllegalArgumentException("Bookmark not found: $bookmarkId") }
+        val bookmark = bookmarkRepository.findById(bookmarkId)
+            ?: throw IllegalArgumentException("Bookmark not found: $bookmarkId")
         if (bookmark.userId != userId) {
             throw IllegalAccessException("User $userId does not have permission for this bookmark: $bookmarkId")
         }

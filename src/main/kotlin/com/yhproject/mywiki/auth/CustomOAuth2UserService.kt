@@ -39,8 +39,8 @@ class CustomOAuth2UserService(
 
     private fun saveOrUpdate(attributes: OAuthAttributes): User {
         val user = userRepository.findByEmail(attributes.email)
-            .map { entity -> entity.update(attributes.name) }
-            .orElse(attributes.toEntity())
+            ?.update(attributes.name)
+            ?: attributes.toEntity()
 
         return userRepository.save(user)
     }

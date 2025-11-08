@@ -4,8 +4,11 @@ import com.yhproject.mywiki.domain.bookmark.Bookmark
 import com.yhproject.mywiki.domain.bookmark.BookmarkRepository
 import com.yhproject.mywiki.domain.user.UserRepository
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
+import com.yhproject.mywiki.dto.BookmarkSlice
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -35,11 +38,20 @@ class BookmarkService(
     }
 
     @Transactional(readOnly = true)
-    fun getBookmarks(userId: Long): List<Bookmark> {
+    fun getBookmarks(userId: Long, cursor: Long?, size: Int): BookmarkSlice {
         validateUserExists(userId)
 
-        val bookmarks = bookmarkRepository.findAllByUserId(userId).sortedByDescending { it.id }
-        return bookmarks
+        val pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "id"))
+
+        val bookmarks = if (cursor == null) {
+            bookmarkRepository.findByUserIdOrderByIdDesc(userId, pageable)
+        } else {
+            bookmarkRepository.findByUserIdAndIdLessThanOrderByIdDesc(userId, cursor, pageable)
+        }
+
+        val nextCursor = if (bookmarks.size == size) bookmarks.lastOrNull()?.id else null
+
+        return BookmarkSlice(content = bookmarks, nextCursor = nextCursor)
     }
 
     @Transactional(readOnly = true)

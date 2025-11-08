@@ -6,12 +6,14 @@ import com.yhproject.mywiki.auth.WithMockCustomUser
 import com.yhproject.mywiki.config.SecurityConfig
 import com.yhproject.mywiki.domain.bookmark.Bookmark
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
+import com.yhproject.mywiki.dto.BookmarkCursorResponse
 import com.yhproject.mywiki.dto.BookmarkResponse
-import com.yhproject.mywiki.dto.BookmarksResponse
+import com.yhproject.mywiki.dto.BookmarkSlice
 import com.yhproject.mywiki.service.BookmarkService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -90,8 +92,9 @@ class BookmarkControllerTest {
                 image = "image2.png"
             )
         )
-        val response = BookmarksResponse.from(bookmarks)
-        whenever(bookmarkService.getBookmarks(any())).thenReturn(bookmarks)
+        val bookmarkSlice = BookmarkSlice(bookmarks, null)
+        val response = BookmarkCursorResponse.from(bookmarkSlice)
+        whenever(bookmarkService.getBookmarks(any(), anyOrNull(), any())).thenReturn(bookmarkSlice)
 
         // when & then
         mockMvc.perform(

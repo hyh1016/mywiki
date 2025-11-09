@@ -4,6 +4,7 @@ import com.yhproject.mywiki.auth.LoginUser
 import com.yhproject.mywiki.auth.SessionUser
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
 import com.yhproject.mywiki.dto.BookmarkCursorResponse
+import com.yhproject.mywiki.dto.BookmarkReadUpdateRequest
 import com.yhproject.mywiki.dto.BookmarkResponse
 import com.yhproject.mywiki.service.BookmarkService
 import org.springframework.http.ResponseEntity
@@ -47,6 +48,16 @@ class BookmarkController(
     fun getRandomBookmarks(@LoginUser sessionUser: SessionUser): ResponseEntity<BookmarkResponse> {
         val bookmark = bookmarkService.getRandomBookmark(sessionUser.id)
         return ResponseEntity.ok(BookmarkResponse.from(bookmark))
+    }
+
+    @PutMapping("/{bookmarkId}/read")
+    fun updateBookmarkReadStatus(
+        @PathVariable bookmarkId: Long,
+        @RequestBody request: BookmarkReadUpdateRequest,
+        @LoginUser sessionUser: SessionUser
+    ): ResponseEntity<BookmarkResponse> {
+        val updatedBookmark = bookmarkService.updateReadStatus(bookmarkId, sessionUser.id, request.read)
+        return ResponseEntity.ok(BookmarkResponse.from(updatedBookmark))
     }
 
     @DeleteMapping("/{bookmarkId}")

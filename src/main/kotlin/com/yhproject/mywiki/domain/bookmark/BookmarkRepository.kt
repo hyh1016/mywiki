@@ -5,6 +5,8 @@ interface BookmarkRepository {
 
     fun findById(id: Long): Bookmark?
 
+    fun findByIdAndUserId(id: Long, userId: Long): Bookmark?
+
     fun findByUserId(userId: Long, cursor: Long?, size: Int): List<Bookmark>
 
     fun findRandomByUserId(userId: Long): Bookmark?

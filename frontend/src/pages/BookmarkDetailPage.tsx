@@ -11,6 +11,7 @@ interface Bookmark {
     title: string;
     description: string;
     image: string;
+    readAt: string | null;
 }
 
 const BookmarkDetailPage: React.FC = () => {
@@ -50,6 +51,21 @@ const BookmarkDetailPage: React.FC = () => {
         navigate(`/summaries/new?bookmarkId=${id}`);
     };
 
+    const handleToggleReadStatus = async () => {
+        if (!bookmark) return;
+
+        const newReadStatus = !bookmark.readAt;
+
+        try {
+            const response = await apiClient.put<Bookmark>(`/api/bookmarks/${bookmark.id}/read`, { read: newReadStatus });
+            setBookmark(response.data);
+            alert(newReadStatus ? '북마크를 읽음으로 표시했습니다.' : '북마크를 읽지 않음으로 표시했습니다.');
+        } catch (err) {
+            alert('읽음 상태 변경에 실패했습니다.');
+            console.error(err);
+        }
+    };
+
     if (isLoading) {
         return <Layout title="로딩 중..."><div className="bookmark-detail-page-content"><p>로딩 중...</p></div></Layout>;
     }
@@ -77,6 +93,12 @@ const BookmarkDetailPage: React.FC = () => {
                 <div className="detail-page-buttons">
                     <Button onClick={handleReadClick} className="detail-page-btn">
                         글 읽기
+                    </Button>
+                    <Button
+                        onClick={handleToggleReadStatus}
+                        className="detail-page-btn"
+                    >
+                        {bookmark.readAt ? '읽지 않음으로 표시' : '읽음으로 표시'}
                     </Button>
                     <Button onClick={handleWriteSummaryClick} className="detail-page-btn">
                         요약 작성하기

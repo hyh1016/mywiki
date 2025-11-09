@@ -19,6 +19,10 @@ class BookmarkRepositoryImpl(
         return jpaRepository.findById(id).orElse(null)
     }
 
+    override fun findByIdAndUserId(id: Long, userId: Long): Bookmark? {
+        return jpaRepository.findByIdAndUserId(id, userId)
+    }
+
     override fun findByUserId(userId: Long, cursor: Long?, size: Int): List<Bookmark> {
         val pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "id"))
 

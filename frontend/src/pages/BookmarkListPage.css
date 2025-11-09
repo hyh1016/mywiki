@@ -30,6 +30,12 @@
     flex-direction: column;
 }
 
+.bookmark-card.read {
+    opacity: 0.6;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+}
+
 .bookmark-card-image-wrapper {
     width: 100%;
     padding-top: 52.5%; /* 16:9 Aspect Ratio */
@@ -70,6 +76,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.5;
+}
+
+.bookmark-read-status {
+    font-size: 12px;
+    color: #007bff;
+    margin-top: 8px;
+    font-weight: 500;
 }
 
 .error-message {

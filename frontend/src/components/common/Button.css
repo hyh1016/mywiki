@@ -14,8 +14,10 @@
     text-decoration: none;
 }
 
-.common-btn:hover:not(:disabled) {
-    background-color: var(--point-color-sub);
+@media (hover: hover) {
+    .common-btn:hover:not(:disabled) {
+        background-color: var(--point-color-sub);
+    }
 }
 
 .common-btn:active:not(:disabled) {

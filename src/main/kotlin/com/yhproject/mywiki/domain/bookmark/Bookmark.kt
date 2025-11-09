@@ -29,5 +29,8 @@ class Bookmark(
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "updated_at", nullable = false)
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    var updatedAt: LocalDateTime = LocalDateTime.now(),
+
+    @Column(name = "read_at", nullable = true)
+    var readAt: LocalDateTime? = null,
 )

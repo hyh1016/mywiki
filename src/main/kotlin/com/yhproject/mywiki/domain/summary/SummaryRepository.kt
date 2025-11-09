@@ -8,4 +8,8 @@ interface SummaryRepository {
     fun findAllByUserId(userId: Long): List<Summary>
 
     fun findByBookmarkIdWithBookmark(bookmarkId: Long): Summary?
+
+    fun existsByBookmarkId(bookmarkId: Long): Boolean
+
+    fun deleteByBookmarkId(bookmarkId: Long)
 }

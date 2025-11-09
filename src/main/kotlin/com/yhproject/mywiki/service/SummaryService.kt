@@ -75,6 +75,11 @@ class SummaryService(
     }
 
     @Transactional(readOnly = true)
+    fun existsByBookmarkIdAndUserId(bookmarkId: Long): Boolean {
+        return summaryRepository.existsByBookmarkId(bookmarkId)
+    }
+
+    @Transactional(readOnly = true)
     fun getSummaryTemplates(): List<SummaryTemplate> {
         return summaryTemplateRepository.findAll()
     }

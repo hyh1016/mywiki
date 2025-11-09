@@ -24,4 +24,12 @@ class SummaryRepositoryImpl(
     override fun findByBookmarkIdWithBookmark(bookmarkId: Long): Summary? {
         return jpaRepository.findByBookmarkIdWithBookmark(bookmarkId).orElse(null)
     }
+
+    override fun existsByBookmarkId(bookmarkId: Long): Boolean {
+        return jpaRepository.existsByBookmarkId(bookmarkId)
+    }
+
+    override fun deleteByBookmarkId(bookmarkId: Long) {
+        return jpaRepository.deleteAllByBookmarkId(bookmarkId)
+    }
 }

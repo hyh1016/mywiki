@@ -9,6 +9,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class BookmarkService(
@@ -62,6 +63,17 @@ class BookmarkService(
         validateUserExists(userId)
         return bookmarkRepository.findRandomByUserId(userId)
             ?: throw NoSuchElementException("사용자의 북마크가 존재하지 않습니다. (userId: $userId)")
+    }
+
+    @Transactional
+    fun updateReadStatus(bookmarkId: Long, userId: Long, read: Boolean): Bookmark {
+        validateUserExists(userId)
+        val bookmark = bookmarkRepository.findByIdAndUserId(bookmarkId, userId)
+            ?: throw IllegalArgumentException("Bookmark not found with id: $bookmarkId for user: $userId")
+
+        bookmark.readAt = if (read) LocalDateTime.now() else null
+        bookmark.updatedAt = LocalDateTime.now()
+        return bookmarkRepository.save(bookmark)
     }
 
     @Transactional

@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param
 
 interface BookmarkJpaRepository : JpaRepository<Bookmark, Long> {
 
+    fun findByIdAndUserId(id: Long, userId: Long): Bookmark?
+
     fun findByUserIdOrderByIdDesc(userId: Long, pageable: Pageable): List<Bookmark>
 
     fun findByUserIdAndIdLessThanOrderByIdDesc(userId: Long, id: Long, pageable: Pageable): List<Bookmark>

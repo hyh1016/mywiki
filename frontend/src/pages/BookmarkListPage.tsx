@@ -11,12 +11,32 @@ interface Bookmark {
     title: string;
     description: string;
     image: string;
+    readAt: string | null;
 }
 
 interface BookmarkCursorResponse {
     content: Bookmark[];
     nextCursor: number | null;
 }
+
+const calculateDaysAgo = (dateString: string): string => {
+    const now = new Date();
+    const readDate = new Date(dateString);
+
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfReadDate = new Date(readDate.getFullYear(), readDate.getMonth(), readDate.getDate());
+
+    const diffTime = startOfToday.getTime() - startOfReadDate.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+        return '오늘 읽음';
+    } else if (diffDays === 1) {
+        return '어제 읽음';
+    } else {
+        return `${diffDays}일 전 읽음`;
+    }
+};
 
 const BookmarkListPage: React.FC = () => {
     const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -89,7 +109,7 @@ const BookmarkListPage: React.FC = () => {
                                 state={{bookmark}}
                                 className="bookmark-card-link"
                             >
-                                <div className="bookmark-card">
+                                <div className={`bookmark-card ${bookmark.readAt ? 'read' : ''}`}>
                                     <div className="bookmark-card-image-wrapper">
                                         {bookmark.image && <img src={bookmark.image} alt={bookmark.title}
                                                                 className="bookmark-card-image"/>}
@@ -97,6 +117,11 @@ const BookmarkListPage: React.FC = () => {
                                     <div className="bookmark-card-content">
                                         <h3 className="bookmark-card-title">{bookmark.title}</h3>
                                         <p className="bookmark-card-description">{bookmark.description}</p>
+                                        {bookmark.readAt && (
+                                            <p className="bookmark-read-status">
+                                                {calculateDaysAgo(bookmark.readAt)}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </Link>

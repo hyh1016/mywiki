@@ -5,7 +5,7 @@
     align-items: center;
 }
 
-.bookmark-info-card {
+.bookmark-detail-page-content .bookmark-info-card {
     margin-top: 32px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -19,7 +19,7 @@
     background-color: white;
 }
 
-.bookmark-image {
+.bookmark-detail-page-content .bookmark-image {
     width: 120px;
     height: 120px;
     object-fit: cover;
@@ -29,20 +29,20 @@
     border: 1px solid #f0f0f0;
 }
 
-.bookmark-text-content {
+.bookmark-detail-page-content .bookmark-text-content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
 
-.bookmark-title {
+.bookmark-detail-page-content .bookmark-title {
     font-size: 22px;
     font-weight: bold;
     color: #333;
     margin: 0 0 8px 0;
 }
 
-.bookmark-description {
+.bookmark-detail-page-content .bookmark-description {
     font-size: 15px;
     color: #666;
     margin: 0;
@@ -54,35 +54,35 @@
     text-overflow: ellipsis;
 }
 
-.detail-page-buttons {
+.bookmark-detail-page-content .detail-page-buttons {
     display: flex;
     gap: 16px;
     margin-top: 32px;
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
 }
 
-.detail-page-btn {
+.bookmark-detail-page-content .detail-page-btn {
     flex-grow: 1; /* Make buttons take equal width */
 }
 
-.error-message {
+.bookmark-detail-page-content .error-message {
     color: #d9534f;
 }
 
 @media (max-width: 768px) {
-    .bookmark-info-card {
+    .bookmark-detail-page-content .bookmark-info-card {
         flex-direction: column;
         align-items: center;
         text-align: center;
     }
 
-    .bookmark-image {
+    .bookmark-detail-page-content .bookmark-image {
         margin-right: 0;
         margin-bottom: 16px;
     }
 
-    .detail-page-buttons {
+    .bookmark-detail-page-content .detail-page-buttons {
         flex-direction: column;
     }
 }

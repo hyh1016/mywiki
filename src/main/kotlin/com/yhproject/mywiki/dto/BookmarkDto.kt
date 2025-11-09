@@ -7,6 +7,10 @@ data class BookmarkCreateRequest(
     val url: String
 )
 
+data class BookmarkReadUpdateRequest(
+    val read: Boolean
+)
+
 data class BookmarkCursorResponse(
     val content: List<BookmarkResponse>,
     val nextCursor: Long?
@@ -32,7 +36,8 @@ data class BookmarkResponse(
     val title: String,
     val description: String,
     val image: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val readAt: LocalDateTime?
 ) {
     companion object {
         fun from(bookmark: Bookmark): BookmarkResponse = BookmarkResponse(
@@ -41,7 +46,8 @@ data class BookmarkResponse(
             title = bookmark.title,
             description = bookmark.description,
             image = bookmark.image,
-            createdAt = bookmark.createdAt
+            createdAt = bookmark.createdAt,
+            readAt = bookmark.readAt
         )
     }
 }

@@ -1,4 +1,4 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import {apiClient} from '../api/apiClient';
@@ -18,6 +18,8 @@ interface BookmarkCursorResponse {
     content: Bookmark[];
     nextCursor: number | null;
 }
+
+type FilterMode = 'all' | 'unread' | 'read';
 
 const calculateDaysAgo = (dateString: string): string => {
     const now = new Date();
@@ -44,6 +46,7 @@ const BookmarkListPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [cursor, setCursor] = useState<number | null>(null);
     const [hasMore, setHasMore] = useState(true);
+    const [filter, setFilter] = useState<FilterMode>('all');
 
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -96,13 +99,31 @@ const BookmarkListPage: React.FC = () => {
         }
     };
 
+    const filteredBookmarks = useMemo(() => {
+        switch (filter) {
+            case 'read':
+                return bookmarks.filter(b => b.readAt);
+            case 'unread':
+                return bookmarks.filter(b => !b.readAt);
+            case 'all':
+            default:
+                return bookmarks;
+        }
+    }, [bookmarks, filter]);
+
 
     return (
         <Layout title="북마크 목록">
             <div className="bookmark-list-page-content">
+                <div className="filter-buttons">
+                    <button onClick={() => setFilter('all')} className={filter === 'all' ? 'active' : ''}>모두</button>
+                    <button onClick={() => setFilter('unread')} className={filter === 'unread' ? 'active' : ''}>읽지 않은 것</button>
+                    <button onClick={() => setFilter('read')} className={filter === 'read' ? 'active' : ''}>읽은 것</button>
+                </div>
+
                 {error && <p className="error-message">{error}</p>}
                 <div className="bookmarks-container">
-                    {bookmarks.map((bookmark) => (
+                    {filteredBookmarks.map((bookmark) => (
                         <div key={bookmark.id} className="bookmark-card-wrapper">
                             <Link
                                 to={`/bookmarks/${bookmark.id}`}
@@ -140,8 +161,12 @@ const BookmarkListPage: React.FC = () => {
                 <div ref={loaderRef}/>
 
                 {isLoading && <p>로딩 중...</p>}
-                {!isLoading && !hasMore && bookmarks.length === 0 && (
-                    <p>등록된 북마크가 없습니다.</p>
+                {!isLoading && filteredBookmarks.length === 0 && (
+                    <p>
+                        {filter === 'all' && '등록된 북마크가 없습니다.'}
+                        {filter === 'unread' && '읽지 않은 북마크가 없습니다.'}
+                        {filter === 'read' && '읽은 북마크가 없습니다.'}
+                    </p>
                 )}
             </div>
         </Layout>

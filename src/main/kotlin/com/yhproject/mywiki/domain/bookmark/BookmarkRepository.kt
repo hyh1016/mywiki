@@ -8,4 +8,6 @@ interface BookmarkRepository {
     fun findByUserId(userId: Long, cursor: Long?, size: Int): List<Bookmark>
 
     fun findRandomByUserId(userId: Long): Bookmark?
+
+    fun delete(bookmarkId: Long)
 }

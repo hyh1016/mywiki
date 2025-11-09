@@ -64,6 +64,12 @@ class BookmarkService(
             ?: throw NoSuchElementException("사용자의 북마크가 존재하지 않습니다. (userId: $userId)")
     }
 
+    @Transactional
+    fun deleteBookmark(bookmarkId: Long, userId: Long) {
+        validateUserExists(userId)
+        bookmarkRepository.delete(bookmarkId)
+    }
+
     private fun validateUserExists(userId: Long) {
         if (!userRepository.existsById(userId)) {
             throw IllegalArgumentException("User not found with id: $userId")

@@ -2,6 +2,7 @@ import React, {useCallback, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import {apiClient} from '../api/apiClient';
+import TrashIcon from '../components/common/TrashIcon';
 import './BookmarkListPage.css';
 
 interface Bookmark {
@@ -59,7 +60,21 @@ const BookmarkListPage: React.FC = () => {
         if (node) observer.current.observe(node);
     }, [isLoading, hasMore, fetchNextPage]);
 
+    const handleDeleteBookmark = (e: React.MouseEvent, bookmarkId: number) => {
+        e.preventDefault();
+        e.stopPropagation();
 
+        if (window.confirm('북마크를 삭제하시겠습니까?')) {
+            apiClient.delete(`/api/bookmarks/${bookmarkId}`)
+                .then(() => {
+                    setBookmarks(prevBookmarks => prevBookmarks.filter(b => b.id !== bookmarkId));
+                })
+                .catch(err => {
+                    alert('북마크 삭제에 실패했습니다.');
+                    console.error(err);
+                });
+        }
+    };
 
 
     return (
@@ -68,23 +83,31 @@ const BookmarkListPage: React.FC = () => {
                 {error && <p className="error-message">{error}</p>}
                 <div className="bookmarks-container">
                     {bookmarks.map((bookmark) => (
-                        <Link
-                            key={bookmark.id}
-                            to={`/bookmarks/${bookmark.id}`}
-                            state={{bookmark}}
-                            className="bookmark-card-link"
-                        >
-                            <div className="bookmark-card">
-                                <div className="bookmark-card-image-wrapper">
-                                    {bookmark.image && <img src={bookmark.image} alt={bookmark.title}
-                                                            className="bookmark-card-image"/>}
+                        <div key={bookmark.id} className="bookmark-card-wrapper">
+                            <Link
+                                to={`/bookmarks/${bookmark.id}`}
+                                state={{bookmark}}
+                                className="bookmark-card-link"
+                            >
+                                <div className="bookmark-card">
+                                    <div className="bookmark-card-image-wrapper">
+                                        {bookmark.image && <img src={bookmark.image} alt={bookmark.title}
+                                                                className="bookmark-card-image"/>}
+                                    </div>
+                                    <div className="bookmark-card-content">
+                                        <h3 className="bookmark-card-title">{bookmark.title}</h3>
+                                        <p className="bookmark-card-description">{bookmark.description}</p>
+                                    </div>
                                 </div>
-                                <div className="bookmark-card-content">
-                                    <h3 className="bookmark-card-title">{bookmark.title}</h3>
-                                    <p className="bookmark-card-description">{bookmark.description}</p>
-                                </div>
-                            </div>
-                        </Link>
+                            </Link>
+                            <button
+                                className="bookmark-delete-button"
+                                onClick={(e) => handleDeleteBookmark(e, bookmark.id)}
+                                aria-label="북마크 삭제"
+                            >
+                                <TrashIcon/>
+                            </button>
+                        </div>
                     ))}
                 </div>
 

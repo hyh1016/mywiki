@@ -32,4 +32,8 @@ class BookmarkRepositoryImpl(
     override fun findRandomByUserId(userId: Long): Bookmark? {
         return jpaRepository.findRandomByUserId(userId)
     }
+
+    override fun delete(bookmarkId: Long) {
+        jpaRepository.deleteById(bookmarkId)
+    }
 }

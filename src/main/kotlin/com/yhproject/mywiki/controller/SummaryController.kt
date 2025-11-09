@@ -71,4 +71,13 @@ class SummaryController(
         val response = SummaryResponse.from(summary, templates)
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/exists", params = ["bookmarkId"])
+    fun checkSummaryExists(
+        @RequestParam bookmarkId: Long,
+        @LoginUser user: SessionUser
+    ): ResponseEntity<Void> {
+        val exists = summaryService.existsByBookmarkIdAndUserId(bookmarkId)
+        return if (exists) ResponseEntity.ok().build() else ResponseEntity.notFound().build()
+    }
 }

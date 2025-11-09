@@ -2,6 +2,7 @@ package com.yhproject.mywiki.service
 
 import com.yhproject.mywiki.domain.bookmark.Bookmark
 import com.yhproject.mywiki.domain.bookmark.BookmarkRepository
+import com.yhproject.mywiki.domain.summary.SummaryRepository
 import com.yhproject.mywiki.domain.user.UserRepository
 import com.yhproject.mywiki.dto.BookmarkCreateRequest
 import com.yhproject.mywiki.dto.BookmarkSlice
@@ -14,7 +15,8 @@ import java.time.LocalDateTime
 @Service
 class BookmarkService(
     private val bookmarkRepository: BookmarkRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val summaryRepository: SummaryRepository
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -79,6 +81,8 @@ class BookmarkService(
     @Transactional
     fun deleteBookmark(bookmarkId: Long, userId: Long) {
         validateUserExists(userId)
+        // 북마크 삭제 전에 연결된 요약 먼저 삭제
+        summaryRepository.deleteByBookmarkId(bookmarkId)
         bookmarkRepository.delete(bookmarkId)
     }
 

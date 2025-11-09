@@ -83,11 +83,15 @@ const BookmarkListPage: React.FC = () => {
         if (node) observer.current.observe(node);
     }, [isLoading, hasMore, fetchNextPage]);
 
-    const handleDeleteBookmark = (e: React.MouseEvent, bookmarkId: number) => {
+    const handleDeleteBookmark = async (e: React.MouseEvent, bookmarkId: number) => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (window.confirm('북마크를 삭제하시겠습니까?')) {
+        if (!window.confirm('북마크를 삭제하시겠습니까?')) {
+            return;
+        }
+
+        const deleteBookmarkAction = () => {
             apiClient.delete(`/api/bookmarks/${bookmarkId}`)
                 .then(() => {
                     setBookmarks(prevBookmarks => prevBookmarks.filter(b => b.id !== bookmarkId));
@@ -96,9 +100,25 @@ const BookmarkListPage: React.FC = () => {
                     alert('북마크 삭제에 실패했습니다.');
                     console.error(err);
                 });
+        };
+
+        try {
+            // Summary 존재 여부 확인
+            await apiClient.get(`/api/summaries/exists?bookmarkId=${bookmarkId}`);
+
+            // 존재하면 바로 제거하는 대신 확인하고 삭제
+            if (window.confirm('이 북마크에 작성된 요약이 있습니다. 그래도 삭제하시겠습니까?')) {
+                deleteBookmarkAction();
+            }
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                deleteBookmarkAction();
+            } else {
+                console.error('요약 존재 여부 확인 중 오류 발생:', error);
+                alert('북마크 삭제에 실패했습니다.');
+            }
         }
     };
-
     const filteredBookmarks = useMemo(() => {
         switch (filter) {
             case 'read':

@@ -15,4 +15,8 @@ interface SummaryJpaRepository : JpaRepository<Summary, Long> {
 
     @Query("SELECT s FROM Summary s JOIN FETCH s.bookmark WHERE s.bookmark.id = :bookmarkId")
     fun findByBookmarkIdWithBookmark(bookmarkId: Long): Optional<Summary>
+
+    fun existsByBookmarkId(bookmarkId: Long): Boolean
+
+    fun deleteAllByBookmarkId(bookmarkId: Long)
 }

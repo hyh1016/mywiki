@@ -2,6 +2,37 @@
     padding: 24px;
 }
 
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.filter-buttons button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.filter-buttons button:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+.filter-buttons button.active {
+    background-color: var(--point-color-main);
+    color: white;
+    border-color: var(--point-color-main);
+    font-weight: bold;
+}
+
+
 .bookmarks-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -31,7 +62,7 @@
 }
 
 .bookmark-card.read {
-    opacity: 0.6;
+    opacity: 0.7;
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
 }

@@ -48,4 +48,10 @@ class BookmarkController(
         val bookmark = bookmarkService.getRandomBookmark(sessionUser.id)
         return ResponseEntity.ok(BookmarkResponse.from(bookmark))
     }
+
+    @DeleteMapping("/{bookmarkId}")
+    fun deleteBookmark(@LoginUser sessionUser: SessionUser, @PathVariable bookmarkId: Long): ResponseEntity<Void> {
+        bookmarkService.deleteBookmark(bookmarkId, sessionUser.id)
+        return ResponseEntity.noContent().build()
+    }
 }

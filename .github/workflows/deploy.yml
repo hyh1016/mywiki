@@ -10,12 +10,12 @@ env:
   # Backend paths
   BACKEND_JAR_PATH: build/libs/
   JAR_FILENAME: mywiki.jar
-  REMOTE_BACKEND_PATH: "~/mywiki/backend"
+  REMOTE_BACKEND_PATH: "/home/${{ secrets.SERVER_USERNAME }}/mywiki/backend/"
 
   # Frontend paths
   FRONTEND_SRC_PATH: ./frontend
   FRONTEND_BUILD_PATH: frontend/build
-  REMOTE_FRONTEND_PATH: "~/mywiki/frontend"
+  REMOTE_FRONTEND_PATH: "/home/${{ secrets.SERVER_USERNAME }}/mywiki/frontend/"
 
 jobs:
   deploy-backend:
@@ -49,6 +49,15 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "OAUTH2_REDIRECT_URI=${{ vars.OAUTH2_REDIRECT_URI }}" >> .env
           echo "CORS_ALLOWED_ORIGINS=${{ vars.CORS_ALLOWED_ORIGINS }}" >> .env
+
+      - name: Prepare remote directory
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_SECRET }}
+          script: |
+            mkdir -p ${{ env.REMOTE_BACKEND_PATH }}
 
       - name: SCP JAR file
         uses: appleboy/scp-action@v1
@@ -122,9 +131,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_SECRET }}
           script: |
-            sudo mkdir -p ${{ env.REMOTE_FRONTEND_PATH }}
-            sudo chown -R ${{ secrets.SERVER_USERNAME }}:${{ secrets.SERVER_USERNAME }} ${{ env.REMOTE_FRONTEND_PATH }}
-            rm -rf ${{ env.REMOTE_FRONTEND_PATH }}/*
+            mkdir -p ${{ env.REMOTE_FRONTEND_PATH }}
 
       - name: SCP Frontend files
         uses: appleboy/scp-action@v1
@@ -135,3 +142,4 @@ jobs:
           source: "${{ env.FRONTEND_BUILD_PATH }}/*"
           target: "${{ env.REMOTE_FRONTEND_PATH }}"
           strip_components: 2
+          overwrite: true
